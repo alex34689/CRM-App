@@ -28,7 +28,7 @@ import com.crm.institute.repository.RoleRepository;
 import com.crm.institute.service.UserService;
 
 @Controller
-public class UserController {
+public class UserController{
 	
 	private final String TAB_FORM = "formTab";
 	private final String TAB_LIST = "listTab";
