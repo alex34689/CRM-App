@@ -6,7 +6,8 @@
 				<th scope="col"># Cuenta</th>
 				<th scope="col">Nombre(s)</th>
 				<th scope="col">Apellido Paterno</th>
-				<th scope="col">Apellido Materno</th>				
+				<th scope="col">Apellido Materno</th>
+				<th scope="col">Grado</th>
 				<th></th>
 			</tr>
 		</thead>
@@ -16,6 +17,7 @@
 				<td th:text="${alumno.nombre}"></td>
 				<td th:text="${alumno.apellidoPaterno}"></td>
 				<td th:text="${alumno.apellidoMaterno}"></td>				
+				<td th:text= "${alumno.grado}"></td>	
 				<td>
 					<span th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')} or (${#authorization.expression('hasRole(''ROLE_USER'')')})">
 						<a href="#" th:href="@{'/editAlumno/'+${alumno.idAlumno}}"><i	class="fas fa-edit"></i></a> 

@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.crm.institute.Exception.UsernameOrIdNotFound;
+import com.crm.institute.enttity.AlumnoCiclo;
 import com.crm.institute.enttity.Alumnos;
+import com.crm.institute.repository.AlumnoCicloRepository;
 import com.crm.institute.repository.AlumnoRepository;
 
 @Service
@@ -17,6 +19,9 @@ public class AlumnosServiceImpl implements AlumnosService {
 
 	@Autowired
 	AlumnoRepository alumnoRepository;
+
+	@Autowired
+	AlumnoCicloRepository alumnoCicloRepository;
 
 	@Override
 	public Iterable<Alumnos> getAllAlumnos() {
@@ -70,11 +75,17 @@ public class AlumnosServiceImpl implements AlumnosService {
 	}
 
 	@Override
-	public Alumnos createAlumno(Alumnos alumnos) throws Exception {
+	public Alumnos createAlumno(Alumnos alumnos, AlumnoCiclo alumnoCiclo) throws Exception {
 		String noCuenta = createNoCuenta();
+		
 		alumnos.setNoCuenta(noCuenta);
 		alumnos.setActivo(true);
+		alumnoCiclo.setNoCuenta(noCuenta);
+		alumnoCiclo.setGrado(alumnos.getGrado());
+
 		alumnos = alumnoRepository.save(alumnos);
+		alumnoCiclo = alumnoCicloRepository.save(alumnoCiclo);
+
 		return alumnos;
 	}
 
@@ -85,7 +96,16 @@ public class AlumnosServiceImpl implements AlumnosService {
 	}
 
 	@Override
-	public Alumnos updateAlumnos(Alumnos fromAlumno) throws Exception {
-		return alumnoRepository.save(fromAlumno);
+	public Alumnos updateAlumnos(Alumnos fromAlumno, AlumnoCiclo alumnoCiclo) throws Exception {
+		fromAlumno = alumnoRepository.save(fromAlumno);
+		alumnoCiclo = alumnoCicloRepository.save(alumnoCiclo);
+		return fromAlumno;
+		
 	}
+
+	@Override
+	public AlumnoCiclo getAlumnoCicloByNoCuentaAndGrado(String noCuenta, int grado) throws Exception {
+		return alumnoCicloRepository.findByNoCuentaAndGrado(noCuenta, grado).orElseThrow(() -> new UsernameOrIdNotFound("No existe el noCuenta - grado"));
+	}
+
 }

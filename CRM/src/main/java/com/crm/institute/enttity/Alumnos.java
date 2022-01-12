@@ -33,6 +33,9 @@ public class Alumnos {
 	@Column
 	private boolean activo;
 
+	@Column
+	private int grado;
+
 	public long getIdAlumno() {
 		return idAlumno;
 	}
@@ -81,6 +84,14 @@ public class Alumnos {
 		this.activo = activo;
 	}
 
+	public int getGrado() {
+		return grado;
+	}
+
+	public void setGrado(int grado) {
+		this.grado = grado;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -88,6 +99,7 @@ public class Alumnos {
 		result = prime * result + (activo ? 1231 : 1237);
 		result = prime * result + ((apellidoMaterno == null) ? 0 : apellidoMaterno.hashCode());
 		result = prime * result + ((apellidoPaterno == null) ? 0 : apellidoPaterno.hashCode());
+		result = prime * result + grado;
 		result = prime * result + (int) (idAlumno ^ (idAlumno >>> 32));
 		result = prime * result + ((noCuenta == null) ? 0 : noCuenta.hashCode());
 		result = prime * result + ((nombre == null) ? 0 : nombre.hashCode());
@@ -115,6 +127,8 @@ public class Alumnos {
 				return false;
 		} else if (!apellidoPaterno.equals(other.apellidoPaterno))
 			return false;
+		if (grado != other.grado)
+			return false;
 		if (idAlumno != other.idAlumno)
 			return false;
 		if (noCuenta == null) {
@@ -133,7 +147,8 @@ public class Alumnos {
 	@Override
 	public String toString() {
 		return "Alumnos [idAlumno=" + idAlumno + ", noCuenta=" + noCuenta + ", nombre=" + nombre + ", apellidoPaterno="
-				+ apellidoPaterno + ", apellidoMaterno=" + apellidoMaterno + ", activo=" + activo + "]";
+				+ apellidoPaterno + ", apellidoMaterno=" + apellidoMaterno + ", activo=" + activo + ", grado=" + grado
+				+ "]";
 	}
 
 }

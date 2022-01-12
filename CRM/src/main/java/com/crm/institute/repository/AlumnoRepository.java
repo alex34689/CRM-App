@@ -9,7 +9,6 @@ import com.crm.institute.enttity.Alumnos;
 
 @Repository
 public interface AlumnoRepository extends CrudRepository<Alumnos, Long> {
-
+	
 	public Optional<Alumnos> findByNoCuenta(String noCuenta);
-
 }

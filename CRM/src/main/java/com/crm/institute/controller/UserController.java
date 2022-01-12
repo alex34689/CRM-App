@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import com.crm.institute.Exception.CustomeFieldValidationException;
 import com.crm.institute.Exception.UsernameOrIdNotFound;
 import com.crm.institute.dto.ChangePassword;
+import com.crm.institute.enttity.AlumnoCiclo;
 import com.crm.institute.enttity.Alumnos;
 import com.crm.institute.enttity.Role;
 import com.crm.institute.enttity.UserF;
@@ -30,8 +31,8 @@ import com.crm.institute.service.AlumnosService;
 import com.crm.institute.service.UserService;
 
 @Controller
-public class UserController{
-	
+public class UserController {
+
 	private final String TAB_FORM = "formTab";
 	private final String TAB_LIST = "listTab";
 
@@ -40,11 +41,11 @@ public class UserController{
 
 	@Autowired
 	RoleRepository roleRepository;
-	
+
 	@Autowired
 	AlumnosService alumnosService;
-	
-	@GetMapping({"/","/login"})
+
+	@GetMapping({ "/", "/login" })
 	public String index() {
 		return "index";
 	}
@@ -58,7 +59,7 @@ public class UserController{
 		model.addAttribute("signup", true);
 		return "user-form/user-signup";
 	}
-	
+
 	@PostMapping("signup")
 	public String postSignup(@Valid @ModelAttribute("userForm") UserF user, BindingResult result, ModelMap model) {
 		Role userRole = roleRepository.findByName("USER");
@@ -66,7 +67,7 @@ public class UserController{
 		model.addAttribute("userForm", user);
 		model.addAttribute("roles", roles);
 		model.addAttribute("signup", true);
-		
+
 		if (result.hasErrors()) {
 			return "user-form/user-signup";
 		} else {
@@ -83,15 +84,14 @@ public class UserController{
 		}
 		return "index";
 	}
-	
+
 	public void baseAttributerForUserForm(Model model, UserF user, String activeTab) {
 		model.addAttribute("userForm", user);
 		model.addAttribute("userList", userService.getAllUsers());
 		model.addAttribute("roles", roleRepository.findAll());
 		model.addAttribute(activeTab, "active");
 	}
-	
-	
+
 	@GetMapping("/userForm")
 	public String getUserForm(Model model) {
 		baseAttributerForUserForm(model, new UserF(), TAB_LIST);
@@ -102,20 +102,19 @@ public class UserController{
 	public String createUser(@Valid @ModelAttribute("userForm") UserF user, BindingResult result, Model model) {
 		if (result.hasErrors()) {
 			baseAttributerForUserForm(model, user, TAB_FORM);
-		} 
-		else {
+		} else {
 			try {
 				userService.createUser(user);
 				baseAttributerForUserForm(model, user, TAB_LIST);
-				
+
 			} catch (CustomeFieldValidationException cfve) {
-				result.rejectValue(cfve.getFieldName(), null, cfve.getMessage());						
+				result.rejectValue(cfve.getFieldName(), null, cfve.getMessage());
 				baseAttributerForUserForm(model, user, TAB_FORM);
-				
+
 			} catch (Exception e) {
 				model.addAttribute("formErrorMessage", e.getMessage());
 				baseAttributerForUserForm(model, user, TAB_FORM);
-				
+
 			}
 		}
 		return "user-form/user-view";
@@ -133,18 +132,16 @@ public class UserController{
 	}
 
 	@PostMapping("editUser")
-	public String postEditUserForm(@Valid @ModelAttribute("userForm") UserF user, BindingResult result,
-			Model model) {
+	public String postEditUserForm(@Valid @ModelAttribute("userForm") UserF user, BindingResult result, Model model) {
 		if (result.hasErrors()) {
 			baseAttributerForUserForm(model, user, TAB_FORM);
 			model.addAttribute("editMode", "true");
 			model.addAttribute("passwordForm", new ChangePassword(user.getId()));
-		} 
-		else {
+		} else {
 			try {
 				userService.updateUser(user);
 				baseAttributerForUserForm(model, user, TAB_LIST);
-				
+
 			} catch (Exception e) {
 				model.addAttribute("formErrorMessage", e.getMessage());
 				baseAttributerForUserForm(model, user, TAB_FORM);
@@ -152,7 +149,7 @@ public class UserController{
 				model.addAttribute("passwordForm", new ChangePassword(user.getId()));
 				return "user-form/user-view";
 			}
-		}	
+		}
 		return "user-form/user-view";
 	}
 
@@ -187,9 +184,10 @@ public class UserController{
 		}
 		return ResponseEntity.ok("Success");
 	}
-	
-	public void baseAttributerForAlumnoForm(Model model, Alumnos alumno, String activeTab) {
+
+	public void baseAttributerForAlumnoForm(Model model, Alumnos alumno, AlumnoCiclo alumnoCiclo, String activeTab) {
 		model.addAttribute("alumnoForm", alumno);
+		model.addAttribute("alumnoCicloForm",  alumnoCiclo);
 		model.addAttribute("alumnoList", alumnosService.getAllAlumnos());
 		model.addAttribute("roles", roleRepository.findAll());
 		model.addAttribute(activeTab, "active");
@@ -197,65 +195,65 @@ public class UserController{
 
 	@GetMapping("/alumnoForm")
 	public String alumnoForm(Model model) {
-		baseAttributerForAlumnoForm(model, new Alumnos(), TAB_LIST);
+		baseAttributerForAlumnoForm(model, new Alumnos(), new AlumnoCiclo(), TAB_LIST);
 		return "alumno-form/alumno-view";
 	}
 
 	@PostMapping("/alumnoForm")
-	public String createAlumno(@Valid @ModelAttribute("alumnoForm") Alumnos alumnos, BindingResult result, Model model) {
+	public String createAlumno(@Valid @ModelAttribute("alumnoForm") Alumnos alumnos,@ModelAttribute("alumnoCicloForm") AlumnoCiclo alumnoCiclo, BindingResult result,
+			Model model) {
 		if (result.hasErrors()) {
-			baseAttributerForAlumnoForm(model, alumnos, TAB_FORM);
-		} 
-		else {
+			baseAttributerForAlumnoForm(model, alumnos, alumnoCiclo, TAB_FORM);
+		} else {
 			try {
-				alumnosService.createAlumno(alumnos);
-				baseAttributerForAlumnoForm(model, alumnos, TAB_LIST);
-				
+				alumnosService.createAlumno(alumnos, alumnoCiclo);
+				baseAttributerForAlumnoForm(model, alumnos, alumnoCiclo, TAB_LIST);
+
 			} catch (CustomeFieldValidationException cfve) {
-				result.rejectValue(cfve.getFieldName(), null, cfve.getMessage());						
-				baseAttributerForAlumnoForm(model, alumnos, TAB_FORM);
-				
+				result.rejectValue(cfve.getFieldName(), null, cfve.getMessage());
+				baseAttributerForAlumnoForm(model, alumnos, alumnoCiclo, TAB_FORM);
+
 			} catch (Exception e) {
 				model.addAttribute("formErrorMessage", e.getMessage());
-				baseAttributerForAlumnoForm(model, alumnos, TAB_FORM);
-				
+				baseAttributerForAlumnoForm(model, alumnos, alumnoCiclo, TAB_FORM);
+
 			}
 		}
 		return "alumno-form/alumno-view";
 	}
-	
+
 	@GetMapping("/editAlumno/{idAlumno}")
 	public String getEditAlumnoForm(Model model, @PathVariable(name = "idAlumno") Long idAlumno) throws Exception {
 		Alumnos alumnoToEdit = alumnosService.getAlumnosByIdAlumno(idAlumno);
+		AlumnoCiclo alumnoCicloToEdit = alumnosService.getAlumnoCicloByNoCuentaAndGrado(alumnoToEdit.getNoCuenta(), alumnoToEdit.getGrado()); 
 
-		baseAttributerForAlumnoForm(model, alumnoToEdit , TAB_FORM);
-		model.addAttribute("editMode", "true");		
+		baseAttributerForAlumnoForm(model, alumnoToEdit, alumnoCicloToEdit, TAB_FORM);
+		model.addAttribute("editMode", "true");
 
 		return "alumno-form/alumno-view";
 	}
 
 	@PostMapping("editAlumno")
-	public String postEditAlumnoForm(@Valid @ModelAttribute("alumnoForm") Alumnos alumnos, BindingResult result,
+	public String postEditAlumnoForm(@Valid @ModelAttribute("alumnoForm") Alumnos alumnos, @ModelAttribute("alumnoCicloForm")AlumnoCiclo alumnoCiclo, BindingResult result,
 			Model model) {
 		if (result.hasErrors()) {
-			baseAttributerForAlumnoForm(model, alumnos, TAB_FORM);
+			baseAttributerForAlumnoForm(model, alumnos, alumnoCiclo, TAB_FORM);
 			model.addAttribute("editMode", "true");
-		} 
-		else {
+		} else {
 			try {
-				alumnosService.updateAlumnos(alumnos);
-				baseAttributerForAlumnoForm(model, alumnos, TAB_LIST);
-				
+				alumnosService.updateAlumnos(alumnos, alumnoCiclo);
+				baseAttributerForAlumnoForm(model, alumnos, alumnoCiclo, TAB_LIST);
+
 			} catch (Exception e) {
 				model.addAttribute("formErrorMessage", e.getMessage());
-				baseAttributerForAlumnoForm(model, alumnos, TAB_FORM);
+				baseAttributerForAlumnoForm(model, alumnos, alumnoCiclo, TAB_FORM);
 				model.addAttribute("editMode", "true");
 				return "alumno-form/alumno-view";
 			}
-		}	
+		}
 		return "alumno-form/alumno-view";
 	}
-	
+
 	@GetMapping("/alumnoForm/cancel")
 	public String cancelEditAlumno(ModelMap model) {
 		return "redirect:/alumnoForm";
