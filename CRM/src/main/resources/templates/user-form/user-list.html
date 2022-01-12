@@ -23,8 +23,10 @@
 						<a href="#" th:href="@{'/editUser/'+${user.id}}"><i	class="fas fa-edit"></i></a> 
 					</span>
 					<span th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">
-						<a href="#" th:onclick="'javascript:confirmDelete(\''+ ${user.id} +'\');'"><i class="fas fa-user-times"></i></a></td>
-					</span>
+						<a href="#" th:onclick="'javascript:confirmDelete(\''+ ${user.id} +'\');'"><i class="fas fa-user-times"></i></a>
+					</span>	
+				</td>
+					
 			</tr>
 		</tbody>
 	</table>
