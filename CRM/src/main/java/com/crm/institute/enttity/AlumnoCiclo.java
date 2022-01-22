@@ -24,6 +24,9 @@ public class AlumnoCiclo {
 	@Column
 	private int grado;
 
+	@Column
+	private boolean pagaVacaciones;
+
 	public long getIdAlumnoCiclo() {
 		return idAlumnoCiclo;
 	}
@@ -56,6 +59,14 @@ public class AlumnoCiclo {
 		this.grado = grado;
 	}
 
+	public boolean isPagaVacaciones() {
+		return pagaVacaciones;
+	}
+
+	public void setPagaVacaciones(boolean pagaVacaciones) {
+		this.pagaVacaciones = pagaVacaciones;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -64,6 +75,7 @@ public class AlumnoCiclo {
 		result = prime * result + grado;
 		result = prime * result + (int) (idAlumnoCiclo ^ (idAlumnoCiclo >>> 32));
 		result = prime * result + ((noCuenta == null) ? 0 : noCuenta.hashCode());
+		result = prime * result + (pagaVacaciones ? 1231 : 1237);
 		return result;
 	}
 
@@ -90,13 +102,15 @@ public class AlumnoCiclo {
 				return false;
 		} else if (!noCuenta.equals(other.noCuenta))
 			return false;
+		if (pagaVacaciones != other.pagaVacaciones)
+			return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
 		return "AlumnoCiclo [idAlumnoCiclo=" + idAlumnoCiclo + ", noCuenta=" + noCuenta + ", ciclo=" + ciclo
-				+ ", grado=" + grado + "]";
+				+ ", grado=" + grado + ", pagaVacaciones=" + pagaVacaciones + "]";
 	}
 
 }

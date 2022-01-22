@@ -77,7 +77,7 @@ public class AlumnosServiceImpl implements AlumnosService {
 	@Override
 	public Alumnos createAlumno(Alumnos alumnos, AlumnoCiclo alumnoCiclo) throws Exception {
 		String noCuenta = createNoCuenta();
-		
+
 		alumnos.setNoCuenta(noCuenta);
 		alumnos.setActivo(true);
 		alumnoCiclo.setNoCuenta(noCuenta);
@@ -100,12 +100,13 @@ public class AlumnosServiceImpl implements AlumnosService {
 		fromAlumno = alumnoRepository.save(fromAlumno);
 		alumnoCiclo = alumnoCicloRepository.save(alumnoCiclo);
 		return fromAlumno;
-		
+
 	}
 
 	@Override
 	public AlumnoCiclo getAlumnoCicloByNoCuentaAndGrado(String noCuenta, int grado) throws Exception {
-		return alumnoCicloRepository.findByNoCuentaAndGrado(noCuenta, grado).orElseThrow(() -> new UsernameOrIdNotFound("No existe el noCuenta - grado"));
+		return alumnoCicloRepository.findByNoCuentaAndGrado(noCuenta, grado)
+				.orElseThrow(() -> new UsernameOrIdNotFound("No existe el noCuenta - grado"));
 	}
 
 }

@@ -1,0 +1,43 @@
+<div th:with="disableFields=!${editMode} and ${#authorization.expression('hasRole(''ROLE_USER'')')}">
+	<form class="form" role="form" autocomplete="off"
+		th:object="${semanasForm}"
+		th:action="${editMode} ? @{/editSemanas} : @{/semanasForm}" method="post">
+		<!-- Es necesario para la validacion del model -->
+
+		<input class="form-control" type=hidden th:field="${semanasForm.idSemana}"
+			th:if="${editMode}">
+
+		<div class="form-group row">
+			<label class="col-lg-3 col-form-label form-control-label">Ciclo</label>
+			<div class="col-lg-9">
+				<input class="form-control" type="text"
+					th:field="${semanasForm.ciclo}" th:disabled="${disableFields}">
+				<div class="alert-danger" th:if="${#fields.hasErrors('ciclo')}"
+					th:errors="*{ciclo}">Name Error</div>
+			</div>
+		</div>
+		<div class="form-group row">
+			<label class="col-lg-3 col-form-label form-control-label">Fecha Inicio </label>
+			<div class="col-lg-9">
+				<input class="form-control" type="text" name="daterange" th:value= "${editMode} ? '' : '01/01/2021 - 01/15/2021'"/>
+				<input class="form-control" type=hidden id="fechaInicio"
+					th:field="${semanasForm.fechaInicio}" th:disabled="${disableFields}">
+				<input class="form-control" type=hidden id="fechaFin"
+					th:field="${semanasForm.fechaFin}" th:disabled="${disableFields}">
+			</div>
+		</div>
+		<div class="form-group row">
+			<div class="col-lg-12 text-center">
+				<a class="btn btn-secondary" th:href="@{'/semanasForm/cancel'}">Cancel
+				</a>
+				<input type="submit" class="btn btn-primary" value="Save Changes"
+					th:value="${editMode} ? 'Save Semanas' : 'Create Semanas'"  th:disabled="${disableFields}">
+			</div>
+		</div>
+		<div class="alert alert-danger text-center"
+			th:if="${formErrorMessage}" th:text="${formErrorMessage}">Error
+			MEssage</div>
+		<div class="alert alert-success text-center d-none" id="formSuccess"
+			th:if="${editMode}">Success Message</div>
+	</form>
+</div>

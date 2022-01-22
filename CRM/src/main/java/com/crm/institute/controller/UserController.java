@@ -24,10 +24,14 @@ import com.crm.institute.Exception.UsernameOrIdNotFound;
 import com.crm.institute.dto.ChangePassword;
 import com.crm.institute.enttity.AlumnoCiclo;
 import com.crm.institute.enttity.Alumnos;
+import com.crm.institute.enttity.Pagos;
 import com.crm.institute.enttity.Role;
+import com.crm.institute.enttity.Semanas;
 import com.crm.institute.enttity.UserF;
 import com.crm.institute.repository.RoleRepository;
 import com.crm.institute.service.AlumnosService;
+import com.crm.institute.service.PagosService;
+import com.crm.institute.service.SemanasService;
 import com.crm.institute.service.UserService;
 
 @Controller
@@ -44,6 +48,12 @@ public class UserController {
 
 	@Autowired
 	AlumnosService alumnosService;
+
+	@Autowired
+	PagosService pagosService;
+
+	@Autowired
+	SemanasService semanasService;
 
 	@GetMapping({ "/", "/login" })
 	public String index() {
@@ -187,7 +197,7 @@ public class UserController {
 
 	public void baseAttributerForAlumnoForm(Model model, Alumnos alumno, AlumnoCiclo alumnoCiclo, String activeTab) {
 		model.addAttribute("alumnoForm", alumno);
-		model.addAttribute("alumnoCicloForm",  alumnoCiclo);
+		model.addAttribute("alumnoCicloForm", alumnoCiclo);
 		model.addAttribute("alumnoList", alumnosService.getAllAlumnos());
 		model.addAttribute("roles", roleRepository.findAll());
 		model.addAttribute(activeTab, "active");
@@ -200,8 +210,8 @@ public class UserController {
 	}
 
 	@PostMapping("/alumnoForm")
-	public String createAlumno(@Valid @ModelAttribute("alumnoForm") Alumnos alumnos,@ModelAttribute("alumnoCicloForm") AlumnoCiclo alumnoCiclo, BindingResult result,
-			Model model) {
+	public String createAlumno(@Valid @ModelAttribute("alumnoForm") Alumnos alumnos,
+			@ModelAttribute("alumnoCicloForm") AlumnoCiclo alumnoCiclo, BindingResult result, Model model) {
 		if (result.hasErrors()) {
 			baseAttributerForAlumnoForm(model, alumnos, alumnoCiclo, TAB_FORM);
 		} else {
@@ -225,7 +235,8 @@ public class UserController {
 	@GetMapping("/editAlumno/{idAlumno}")
 	public String getEditAlumnoForm(Model model, @PathVariable(name = "idAlumno") Long idAlumno) throws Exception {
 		Alumnos alumnoToEdit = alumnosService.getAlumnosByIdAlumno(idAlumno);
-		AlumnoCiclo alumnoCicloToEdit = alumnosService.getAlumnoCicloByNoCuentaAndGrado(alumnoToEdit.getNoCuenta(), alumnoToEdit.getGrado()); 
+		AlumnoCiclo alumnoCicloToEdit = alumnosService.getAlumnoCicloByNoCuentaAndGrado(alumnoToEdit.getNoCuenta(),
+				alumnoToEdit.getGrado());
 
 		baseAttributerForAlumnoForm(model, alumnoToEdit, alumnoCicloToEdit, TAB_FORM);
 		model.addAttribute("editMode", "true");
@@ -234,8 +245,8 @@ public class UserController {
 	}
 
 	@PostMapping("editAlumno")
-	public String postEditAlumnoForm(@Valid @ModelAttribute("alumnoForm") Alumnos alumnos, @ModelAttribute("alumnoCicloForm")AlumnoCiclo alumnoCiclo, BindingResult result,
-			Model model) {
+	public String postEditAlumnoForm(@Valid @ModelAttribute("alumnoForm") Alumnos alumnos,
+			@ModelAttribute("alumnoCicloForm") AlumnoCiclo alumnoCiclo, BindingResult result, Model model) {
 		if (result.hasErrors()) {
 			baseAttributerForAlumnoForm(model, alumnos, alumnoCiclo, TAB_FORM);
 			model.addAttribute("editMode", "true");
@@ -257,5 +268,117 @@ public class UserController {
 	@GetMapping("/alumnoForm/cancel")
 	public String cancelEditAlumno(ModelMap model) {
 		return "redirect:/alumnoForm";
+	}
+
+	public void baseAttributerForPagosForm(Model model, Pagos pagos, String activeTab) {
+		model.addAttribute("pagosForm", pagos);
+		model.addAttribute("pagosList", pagosService.getAllPagos());
+		model.addAttribute("roles", roleRepository.findAll());
+		model.addAttribute(activeTab, "active");
+	}
+
+	@GetMapping("/pagosForm")
+	public String pagoForm(Model model) {
+		baseAttributerForPagosForm(model, new Pagos(), TAB_LIST);
+		return "pagos-form/pagos-view";
+	}
+
+	@PostMapping("/pagosForm")
+	public String createPagos(@Valid @ModelAttribute("pagosForm") Pagos pagos, BindingResult result, Model model) {
+		if (result.hasErrors()) {
+			baseAttributerForPagosForm(model, pagos, TAB_FORM);
+		} else {
+			try {
+				pagosService.createPago(pagos);
+				baseAttributerForPagosForm(model, pagos, TAB_LIST);
+
+			} catch (CustomeFieldValidationException cfve) {
+				result.rejectValue(cfve.getFieldName(), null, cfve.getMessage());
+				baseAttributerForPagosForm(model, pagos, TAB_FORM);
+
+			} catch (Exception e) {
+				model.addAttribute("formErrorMessage", e.getMessage());
+				baseAttributerForPagosForm(model, pagos, TAB_FORM);
+
+			}
+		}
+		return "pagos-form/pagos-view";
+	}
+
+	@GetMapping("/pagosForm/cancel")
+	public String cancelPago(ModelMap model) {
+		return "redirect:/pagosForm";
+	}
+
+	public void baseAttributerForSemanasForm(Model model, Semanas semanas, String activeTab) {
+		model.addAttribute("semanasForm", semanas);
+		model.addAttribute("semanasList", semanasService.getAllSemanas());
+		model.addAttribute("roles", roleRepository.findAll());
+		model.addAttribute(activeTab, "active");
+	}
+
+	@GetMapping("/semanasForm")
+	public String getSemanasForm(Model model) {
+		baseAttributerForSemanasForm(model, new Semanas(), TAB_LIST);
+		return "semanas-form/semanas-view";
+	}
+
+	@PostMapping("/semanasForm")
+	public String createSemanas(@Valid @ModelAttribute("semansaForm") Semanas semanas, BindingResult result,
+			Model model) {
+		if (result.hasErrors()) {
+			baseAttributerForSemanasForm(model, semanas, TAB_FORM);
+		} else {
+			try {
+				semanasService.createSemanas(semanas);
+				baseAttributerForSemanasForm(model, semanas, TAB_LIST);
+
+			} catch (CustomeFieldValidationException cfve) {
+				result.rejectValue(cfve.getFieldName(), null, cfve.getMessage());
+				baseAttributerForSemanasForm(model, semanas, TAB_FORM);
+
+			} catch (Exception e) {
+				model.addAttribute("formErrorMessage", e.getMessage());
+				baseAttributerForSemanasForm(model, semanas, TAB_FORM);
+
+			}
+		}
+		return "semanas-form/semanas-view";
+	}
+
+	@GetMapping("/editSemana/{idSemana}")
+	public String getEditSemanaForm(Model model, @PathVariable(name = "idSemana") Long idSemana) throws Exception {
+		Semanas semanasToEdit = semanasService.getSemanasByIdSemana(idSemana);
+
+		baseAttributerForSemanasForm(model, semanasToEdit, TAB_FORM);
+		model.addAttribute("editMode", "true");
+
+		return "semanas-form/semanas-view";
+	}
+
+	@PostMapping("editSemanas")
+	public String postEditSemanasForm(@Valid @ModelAttribute("semanasForm") Semanas semanas, BindingResult result,
+			Model model) {
+		if (result.hasErrors()) {
+			baseAttributerForSemanasForm(model, semanas, TAB_FORM);
+			model.addAttribute("editMode", "true");
+		} else {
+			try {
+				semanasService.updateSemanas(semanas);
+				baseAttributerForSemanasForm(model, semanas, TAB_LIST);
+
+			} catch (Exception e) {
+				model.addAttribute("formErrorMessage", e.getMessage());
+				baseAttributerForSemanasForm(model, semanas, TAB_FORM);
+				model.addAttribute("editMode", "true");
+				return "semanas-form/semanas-view";
+			}
+		}
+		return "semanas-form/semanas-view";
+	}
+
+	@GetMapping("/semanasForm/cancel")
+	public String cancelEditSemanas(ModelMap model) {
+		return "redirect:/semanasForm";
 	}
 }
