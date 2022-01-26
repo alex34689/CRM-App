@@ -26,12 +26,12 @@ import com.crm.institute.enttity.AlumnoCiclo;
 import com.crm.institute.enttity.Alumnos;
 import com.crm.institute.enttity.Pagos;
 import com.crm.institute.enttity.Role;
-import com.crm.institute.enttity.Semanas;
+import com.crm.institute.enttity.Ciclos;
 import com.crm.institute.enttity.UserF;
 import com.crm.institute.repository.RoleRepository;
 import com.crm.institute.service.AlumnosService;
 import com.crm.institute.service.PagosService;
-import com.crm.institute.service.SemanasService;
+import com.crm.institute.service.CiclosService;
 import com.crm.institute.service.UserService;
 
 @Controller
@@ -53,7 +53,7 @@ public class UserController {
 	PagosService pagosService;
 
 	@Autowired
-	SemanasService semanasService;
+	CiclosService ciclosService;
 
 	@GetMapping({ "/", "/login" })
 	public String index() {
@@ -310,75 +310,74 @@ public class UserController {
 		return "redirect:/pagosForm";
 	}
 
-	public void baseAttributerForSemanasForm(Model model, Semanas semanas, String activeTab) {
-		model.addAttribute("semanasForm", semanas);
-		model.addAttribute("semanasList", semanasService.getAllSemanas());
+	public void baseAttributerForCiclosForm(Model model, Ciclos semanas, String activeTab) {
+		model.addAttribute("ciclosForm", semanas);
+		model.addAttribute("ciclosList", ciclosService.getAllCiclos());
 		model.addAttribute("roles", roleRepository.findAll());
 		model.addAttribute(activeTab, "active");
 	}
 
-	@GetMapping("/semanasForm")
-	public String getSemanasForm(Model model) {
-		baseAttributerForSemanasForm(model, new Semanas(), TAB_LIST);
-		return "semanas-form/semanas-view";
+	@GetMapping("/ciclosForm")
+	public String getCiclosForm(Model model) {
+		baseAttributerForCiclosForm(model, new Ciclos(), TAB_LIST);
+		return "ciclos-form/ciclos-view";
 	}
 
-	@PostMapping("/semanasForm")
-	public String createSemanas(@Valid @ModelAttribute("semansaForm") Semanas semanas, BindingResult result,
-			Model model) {
+	@PostMapping("/ciclosForm")
+	public String createCiclos(@Valid @ModelAttribute("ciclosForm") Ciclos ciclos, BindingResult result, Model model) {
 		if (result.hasErrors()) {
-			baseAttributerForSemanasForm(model, semanas, TAB_FORM);
+			baseAttributerForCiclosForm(model, ciclos, TAB_FORM);
 		} else {
 			try {
-				semanasService.createSemanas(semanas);
-				baseAttributerForSemanasForm(model, semanas, TAB_LIST);
+				ciclosService.createCiclos(ciclos);
+				baseAttributerForCiclosForm(model, ciclos, TAB_LIST);
 
 			} catch (CustomeFieldValidationException cfve) {
 				result.rejectValue(cfve.getFieldName(), null, cfve.getMessage());
-				baseAttributerForSemanasForm(model, semanas, TAB_FORM);
+				baseAttributerForCiclosForm(model, ciclos, TAB_FORM);
 
 			} catch (Exception e) {
 				model.addAttribute("formErrorMessage", e.getMessage());
-				baseAttributerForSemanasForm(model, semanas, TAB_FORM);
+				baseAttributerForCiclosForm(model, ciclos, TAB_FORM);
 
 			}
 		}
-		return "semanas-form/semanas-view";
+		return "ciclos-form/ciclos-view";
 	}
 
-	@GetMapping("/editSemana/{idSemana}")
-	public String getEditSemanaForm(Model model, @PathVariable(name = "idSemana") Long idSemana) throws Exception {
-		Semanas semanasToEdit = semanasService.getSemanasByIdSemana(idSemana);
+	@GetMapping("/editCiclos/{idCiclo}")
+	public String getEditCicloForm(Model model, @PathVariable(name = "idCiclo") Long idCiclo) throws Exception {
+		Ciclos cicloToEdit = ciclosService.getCiclosByIdCiclo(idCiclo);
 
-		baseAttributerForSemanasForm(model, semanasToEdit, TAB_FORM);
+		baseAttributerForCiclosForm(model, cicloToEdit, TAB_FORM);
 		model.addAttribute("editMode", "true");
 
-		return "semanas-form/semanas-view";
+		return "ciclos-form/ciclos-view";
 	}
 
-	@PostMapping("editSemanas")
-	public String postEditSemanasForm(@Valid @ModelAttribute("semanasForm") Semanas semanas, BindingResult result,
+	@PostMapping("editCiclos")
+	public String postEditCiclosForm(@Valid @ModelAttribute("ciclosForm") Ciclos ciclos, BindingResult result,
 			Model model) {
 		if (result.hasErrors()) {
-			baseAttributerForSemanasForm(model, semanas, TAB_FORM);
+			baseAttributerForCiclosForm(model, ciclos, TAB_FORM);
 			model.addAttribute("editMode", "true");
 		} else {
 			try {
-				semanasService.updateSemanas(semanas);
-				baseAttributerForSemanasForm(model, semanas, TAB_LIST);
+				ciclosService.updateCiclos(ciclos);
+				baseAttributerForCiclosForm(model, ciclos, TAB_LIST);
 
 			} catch (Exception e) {
 				model.addAttribute("formErrorMessage", e.getMessage());
-				baseAttributerForSemanasForm(model, semanas, TAB_FORM);
+				baseAttributerForCiclosForm(model, ciclos, TAB_FORM);
 				model.addAttribute("editMode", "true");
-				return "semanas-form/semanas-view";
+				return "ciclos-form/ciclos-view";
 			}
 		}
-		return "semanas-form/semanas-view";
+		return "ciclos-form/ciclos-view";
 	}
 
-	@GetMapping("/semanasForm/cancel")
-	public String cancelEditSemanas(ModelMap model) {
-		return "redirect:/semanasForm";
+	@GetMapping("/ciclosForm/cancel")
+	public String cancelEditCiclos(ModelMap model) {
+		return "redirect:/ciclosForm";
 	}
 }

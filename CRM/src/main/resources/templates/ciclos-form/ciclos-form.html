@@ -1,0 +1,61 @@
+<div th:with="disableFields=!${editMode} and ${#authorization.expression('hasRole(''ROLE_USER'')')}">
+	<form class="form" role="form" autocomplete="off"
+		th:object="${ciclosForm}"
+		th:action="${editMode} ? @{/editCiclos} : @{/ciclosForm}" method="post">
+		<!-- Es necesario para la validacion del model -->
+
+		<input class="form-control" type=hidden th:field="${ciclosForm.idCiclo}"
+			th:if="${editMode}">
+
+		<div class="form-group row">
+			<label class="col-lg-3 col-form-label form-control-label">Ciclo</label>
+			<div class="col-lg-9">
+				<input class="form-control" type="text"
+					th:field="${ciclosForm.ciclo}" th:disabled="${disableFields}">
+				<div class="alert-danger" th:if="${#fields.hasErrors('ciclo')}"
+					th:errors="*{ciclo}">Name Error</div>
+			</div>
+		</div>
+		<div class="form-group row">
+			<label class="col-lg-3 col-form-label form-control-label">Fecha Inicio </label>
+			<div class="col-lg-9">
+				<input class="form-control" type="text" name="daterange" th:value= "${editMode} ? ${ciclosForm.fechaInicio} : '01/01/2021 - 01/15/2021'"/>
+				<input class="form-control" type=hidden id="fechaInicio"
+					th:field="${ciclosForm.fechaInicio}" th:disabled="${disableFields}">
+				<input class="form-control" type=hidden id="fechaFin"
+					th:field="${ciclosForm.fechaFin}" th:disabled="${disableFields}">
+			</div>
+		</div>
+		<div class="form-group row">
+			<label class="col-lg-3 col-form-label form-control-label">Importe con Vacaciones</label>
+			<div class="col-lg-9">
+				<input class="form-control" type="text"
+					th:field="${ciclosForm.importeVacacionesc}">
+				<div class="alert-danger" th:if="${#fields.hasErrors('importeVacacionesc')}"
+					th:errors="*{importeVacacionesc}">Name Error</div>
+			</div>
+		</div>
+		<div class="form-group row">
+			<label class="col-lg-3 col-form-label form-control-label">Importe sin Vacaciones</label>
+			<div class="col-lg-9">
+				<input class="form-control" type="text"
+					th:field="${ciclosForm.importeVacacioness}">
+				<div class="alert-danger" th:if="${#fields.hasErrors('importeVacacioness')}"
+					th:errors="*{importeVacacioness}">Name Error</div>
+			</div>
+		</div>
+		<div class="form-group row">
+			<div class="col-lg-12 text-center">
+				<a class="btn btn-secondary" th:href="@{'/ciclosForm/cancel'}">Cancel
+				</a>
+				<input type="submit" class="btn btn-primary" value="Save Changes"
+					th:value="${editMode} ? 'Save Ciclo' : 'Create Ciclo'"  th:disabled="${disableFields}">
+			</div>
+		</div>
+		<div class="alert alert-danger text-center"
+			th:if="${formErrorMessage}" th:text="${formErrorMessage}">Error
+			MEssage</div>
+		<div class="alert alert-success text-center d-none" id="formSuccess"
+			th:if="${editMode}">Success Message</div>
+	</form>
+</div>
