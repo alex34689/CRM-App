@@ -95,7 +95,8 @@ public class CiclosServiceImpl implements CiclosService {
 
 	@Override
 	public Ciclos updateCiclos(Ciclos ciclos) throws Exception {
-		Iterable<Semanas> semanas = semanasRepository.findByIdSemana(ciclos.getIdCiclo());
+		Iterable<Semanas> semanas = semanasRepository.findByCiclos(ciclos);
+
 		ciclos = generaCiclo(ciclos);
 		for (Semanas semDetalle : semanas) {
 			semanasRepository.delete(semDetalle);

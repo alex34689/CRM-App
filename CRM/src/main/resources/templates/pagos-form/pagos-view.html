@@ -48,16 +48,26 @@
 	$(document).ready(function() {
 		$('#pagosList').DataTable();
 	});
+	
+	$(document).ready(function() {
+		$('#colegiaturasList').DataTable({
+		 "autoWidth": true
+		});
+	});
 </script>
 
 </head>
 <body>
 	<div class="container">
-		<div class="mx-auto col-sm-12 main-section" id="myTab" role="tablist">
+		<div class="mx-auto col-xl-12 main-section" id="myTab" role="tablist">
 			<ul class="nav nav-tabs justify-content-end">
 				<li class="nav-item"><a class="nav-link"
+					th:classappend="${listColeTab}" id="list-tab" data-toggle="tab"
+					href="#listColegiatura" role="tab" aria-controls="list" aria-selected="false">Colegiaturas</a>
+				</li>
+				<li class="nav-item"><a class="nav-link"
 					th:classappend="${listTab}" id="list-tab" data-toggle="tab"
-					href="#list" role="tab" aria-controls="list" aria-selected="false">List</a>
+					href="#list" role="tab" aria-controls="list" aria-selected="false">Pagos</a>
 				</li>
 				<li class="nav-item"><a class="nav-link"
 					th:classappend="${formTab}" id="form-tab" data-toggle="tab"
@@ -70,11 +80,22 @@
 							class="fas fa-sign-out-alt"></i></span></a></li>
 			</ul>
 			<div class="tab-content" id="myTabContent">
+				<div class="tab-pane fade show" th:classappend="${listColeTab}"
+					id="listColegiatura" role="tabpanel" aria-labelledby="list-tab">
+					<div class="card">
+						<div class="card-header">
+							<h4>Colegiaturas</h4>
+						</div>
+						<div class="card-body">
+							<div th:include="pagos-form/colegiaturas-list.html" th:remove="tag"></div>
+						</div>
+					</div>
+				</div>
 				<div class="tab-pane fade show" th:classappend="${listTab}"
 					id="list" role="tabpanel" aria-labelledby="list-tab">
 					<div class="card">
 						<div class="card-header">
-							<h4>Roster</h4>
+							<h4>Pagos</h4>
 						</div>
 						<div class="card-body">
 							<div th:include="pagos-form/pagos-list.html" th:remove="tag"></div>

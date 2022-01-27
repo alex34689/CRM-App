@@ -27,7 +27,9 @@ import com.crm.institute.enttity.Alumnos;
 import com.crm.institute.enttity.Pagos;
 import com.crm.institute.enttity.Role;
 import com.crm.institute.enttity.Ciclos;
+import com.crm.institute.enttity.ColegiaturasView;
 import com.crm.institute.enttity.UserF;
+import com.crm.institute.repository.ColegiaturasViewRepository;
 import com.crm.institute.repository.RoleRepository;
 import com.crm.institute.service.AlumnosService;
 import com.crm.institute.service.PagosService;
@@ -39,6 +41,7 @@ public class UserController {
 
 	private final String TAB_FORM = "formTab";
 	private final String TAB_LIST = "listTab";
+	private final String TAB_LIST_COLE = "listColeTab";
 
 	@Autowired
 	UserService userService;
@@ -54,6 +57,9 @@ public class UserController {
 
 	@Autowired
 	CiclosService ciclosService;
+	
+	@Autowired
+	ColegiaturasViewRepository colegiaturasViewRepository;
 
 	@GetMapping({ "/", "/login" })
 	public String index() {
@@ -273,13 +279,14 @@ public class UserController {
 	public void baseAttributerForPagosForm(Model model, Pagos pagos, String activeTab) {
 		model.addAttribute("pagosForm", pagos);
 		model.addAttribute("pagosList", pagosService.getAllPagos());
+		model.addAttribute("colegiaturasList", colegiaturasViewRepository.findAll());
 		model.addAttribute("roles", roleRepository.findAll());
 		model.addAttribute(activeTab, "active");
 	}
 
 	@GetMapping("/pagosForm")
 	public String pagoForm(Model model) {
-		baseAttributerForPagosForm(model, new Pagos(), TAB_LIST);
+		baseAttributerForPagosForm(model, new Pagos(), TAB_LIST_COLE);
 		return "pagos-form/pagos-view";
 	}
 

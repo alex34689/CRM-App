@@ -1,0 +1,72 @@
+<div class="table-responsive">
+	<table id="colegiaturasList"
+		class="table table-bordered table-hover table-striped">
+		<thead class="thead-light">
+			<tr>
+				<th scope="col">Tipo Semana</th>
+				<th scope="col">Semana</th>
+				<th scope="col">Paga Vacaciones</th>
+				<th scope="col">No Cuenta</th>
+				<th scope="col">Nombre</th>
+				<th scope="col">Apellido P</th>
+				<th scope="col">Apellido M</th>
+				<th scope="col">Ciclo</th>
+				<th scope="col">Semana Inicio</th>
+				<th scope="col">Semana Fin</th>
+				<th scope="col">Estado</th>
+				<th scope="col">Saldo</th>
+				<th scope="col">Importe Pendiente</th>
+				<th scope="col">Colegiatura</th>
+				<th scope="col">Activo</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="colegiaturas: ${colegiaturasList}">
+				<td th:text="${colegiaturas.tipoSemana}"></td>
+				<td th:text="${colegiaturas.semana}"></td>
+				<td th:text="${colegiaturas.pagaVacaciones}"></td>
+				<td th:text="${colegiaturas.noCuenta}"></td>
+				<td th:text="${colegiaturas.nombre}"></td>
+				<td th:text="${colegiaturas.apellidoPaterno}"></td>
+				<td th:text="${colegiaturas.apellidoMaterno}"></td>
+				<td th:text="${colegiaturas.ciclo}"></td>
+				<td	th:text="${#strings.substring(#strings.toString(colegiaturas.semanaInicio),0,10)}">
+				<td	th:text="${#strings.substring(#strings.toString(colegiaturas.semanaFin),0,10)}">
+				<td th:text="${colegiaturas.estado}"></td>
+				<td><span th:switch="${colegiaturas.saldo}" class="float-right">
+					<span th:case="0">$ 0.00</span> 
+					<span th:case="''">-</span> 
+					<span th:case="${colegiaturas.saldo} == null"><span>-</span></span> 
+					<span th:case="null"> <span>-</span></span> 
+					<span th:case="*"> <span th:inline="text">$[[${#numbers.formatDecimal(colegiaturas.saldo,	1, 'COMMA', 2, 'POINT')}]]</span></span>
+					</span>
+				</td>
+				<td><span th:switch="${colegiaturas.importePendiente}" class="float-right">
+					<span th:case="0">$ 0.00</span> 
+					<span th:case="''">-</span> 
+					<span th:case="${colegiaturas.importePendiente} == null"><span>-</span></span> 
+					<span th:case="null"> <span>-</span></span> 
+					<span th:case="*"> <span th:inline="text">$[[${#numbers.formatDecimal(colegiaturas.importePendiente,	1, 'COMMA', 2, 'POINT')}]]</span></span>
+					</span>
+				</td>
+				<td><span th:switch="${colegiaturas.colegiatura}" class="float-right">
+					<span th:case="0">$ 0.00</span> 
+					<span th:case="''">-</span> 
+					<span th:case="${colegiaturas.colegiatura} == null"><span>-</span></span> 
+					<span th:case="null"> <span>-</span></span> 
+					<span th:case="*"> <span th:inline="text">$[[${#numbers.formatDecimal(colegiaturas.colegiatura,	1, 'COMMA', 2, 'POINT')}]]</span></span>
+					</span>
+				</td>
+				<td th:text="${colegiaturas.estatusAlumno}"></td>
+				<td>
+					<span>
+						<a href="#"><i	class="fas fa-edit"></i></a> 
+					</span>					
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<div class="alert alert-danger text-center" th:if="${listErrorMessage}"
+		th:text="${listErrorMessage}">Error MEssage</div>
+</div>

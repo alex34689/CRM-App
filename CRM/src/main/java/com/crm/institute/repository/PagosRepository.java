@@ -7,11 +7,11 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import com.crm.institute.enttity.Pagos;
-import com.crm.institute.enttity.PendientePago;
+import com.crm.institute.enttity.ColegiaturasView;
 
 @Repository
 public interface PagosRepository extends CrudRepository<Pagos, Long> {
 
-//	@Query(value = "", nativeQuery = true)
-//	public ArrayList<PendientePago> findPendientePago();
+	@Query(value = "select * from listadoColegiaturas", nativeQuery = true)
+	public ArrayList<ColegiaturasView> findPendientePago();
 }
