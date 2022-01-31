@@ -61,7 +61,7 @@
 				<td th:text="${colegiaturas.estatusAlumno}"></td>
 				<td>
 					<span>
-						<a href="#"><i	class="fas fa-edit"></i></a> 
+						<a href="#" th:href="@{'/pagoColegiatura/'+${colegiaturas.noCuenta} +'&'+ ${colegiaturas.ciclo} +'&'+ ${colegiaturas.semana}}"><i	class="fas fa-edit"></i></a> 
 					</span>					
 				</td>
 			</tr>

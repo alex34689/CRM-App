@@ -276,8 +276,9 @@ public class UserController {
 		return "redirect:/alumnoForm";
 	}
 
-	public void baseAttributerForPagosForm(Model model, Pagos pagos, String activeTab) {
+	public void baseAttributerForPagosForm(Model model, Pagos pagos,ColegiaturasView colegiaturas, String activeTab) {
 		model.addAttribute("pagosForm", pagos);
+		model.addAttribute("colegiaturasForm", colegiaturas);
 		model.addAttribute("pagosList", pagosService.getAllPagos());
 		model.addAttribute("colegiaturasList", colegiaturasViewRepository.findAll());
 		model.addAttribute("roles", roleRepository.findAll());
@@ -286,29 +287,45 @@ public class UserController {
 
 	@GetMapping("/pagosForm")
 	public String pagoForm(Model model) {
-		baseAttributerForPagosForm(model, new Pagos(), TAB_LIST_COLE);
+		baseAttributerForPagosForm(model, new Pagos(), new ColegiaturasView(), TAB_LIST_COLE);
 		return "pagos-form/pagos-view";
 	}
 
 	@PostMapping("/pagosForm")
 	public String createPagos(@Valid @ModelAttribute("pagosForm") Pagos pagos, BindingResult result, Model model) {
 		if (result.hasErrors()) {
-			baseAttributerForPagosForm(model, pagos, TAB_FORM);
+			baseAttributerForPagosForm(model, pagos, new ColegiaturasView(), TAB_FORM);
 		} else {
 			try {
 				pagosService.createPago(pagos);
-				baseAttributerForPagosForm(model, pagos, TAB_LIST);
+				baseAttributerForPagosForm(model, pagos, new ColegiaturasView(), TAB_LIST);
 
 			} catch (CustomeFieldValidationException cfve) {
 				result.rejectValue(cfve.getFieldName(), null, cfve.getMessage());
-				baseAttributerForPagosForm(model, pagos, TAB_FORM);
+				baseAttributerForPagosForm(model, pagos, new ColegiaturasView(), TAB_FORM);
 
 			} catch (Exception e) {
 				model.addAttribute("formErrorMessage", e.getMessage());
-				baseAttributerForPagosForm(model, pagos, TAB_FORM);
+				baseAttributerForPagosForm(model, pagos, new ColegiaturasView(), TAB_FORM);
 
 			}
 		}
+		return "pagos-form/pagos-view";
+	}
+	
+	@GetMapping("/pagoColegiatura/{noCuenta}&{ciclo}&{semana}")
+	public String getPagoColegiaturaForm(Model model,@PathVariable(name = "noCuenta") String noCuenta,  @PathVariable(name = "ciclo") String ciclo, @PathVariable(name = "semana") int semana) throws Exception {
+		ColegiaturasView  colegiaturasViews = colegiaturasViewRepository.findByNoCuentaAndCicloAndSemana(noCuenta, ciclo, semana);
+		Pagos pagos = new Pagos();
+		
+		pagos.setNoCuenta(noCuenta);
+		pagos.setCiclo(ciclo);
+		pagos.setSemana(semana);
+		pagos.setImporte(colegiaturasViews.getImportePendiente());
+		
+		baseAttributerForPagosForm(model, pagos, colegiaturasViews, TAB_FORM);
+		model.addAttribute("editMode", "true");
+
 		return "pagos-form/pagos-view";
 	}
 
